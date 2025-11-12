@@ -17,11 +17,14 @@ const handleSignOut = async () => {
     <!-- Navigation Header -->
     <nav class="bg-white shadow-sm">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo -->
           <div class="flex items-center">
-            <h1 class="text-2xl font-bold text-gray-900">⛳ Golf League</h1>
+            <img src="@/assets/logo.png" alt="Go4thePin Logo" class="h-10 sm:h-12 w-auto cursor-pointer" @click="router.push('/dashboard')" />
           </div>
-          <div class="flex items-center space-x-4">
+
+          <!-- Desktop Navigation -->
+          <div class="hidden md:flex items-center space-x-4">
             <button
               @click="router.push('/events')"
               class="text-sm text-gray-700 hover:text-gray-900 font-medium"
@@ -58,6 +61,24 @@ const handleSignOut = async () => {
             <button
               @click="handleSignOut"
               class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+            >
+              Sign Out
+            </button>
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <div class="md:hidden flex items-center space-x-2">
+            <button
+              @click="router.push('/profile')"
+              class="p-2 text-gray-700 hover:text-gray-900"
+            >
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </button>
+            <button
+              @click="handleSignOut"
+              class="px-3 py-1.5 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700"
             >
               Sign Out
             </button>

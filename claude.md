@@ -152,7 +152,7 @@ Each with full 18-hole data and multiple tee boxes.
 ## Project Structure
 
 ```
-golf-league-app/
+go4thepin/
 ├── src/
 │   ├── assets/          # Styles (main.css with Tailwind)
 │   ├── components/      # Reusable Vue components
@@ -224,7 +224,7 @@ golf-league-app/
 
 ### Running the App
 ```bash
-cd golf-league-app
+cd go4thepin
 npm run dev
 # Opens on http://localhost:5173
 ```
@@ -371,7 +371,7 @@ LIMIT 10;
 ### Vercel Configuration
 - **Platform**: Vercel
 - **Repository**: https://github.com/robertkeele/go4thepin
-- **Root Directory**: `golf-league-app`
+- **Root Directory**: `go4thepin`
 - **Framework**: Vite
 - **Build Command**: `npm run build`
 - **Output Directory**: `dist`
@@ -557,6 +557,46 @@ After deploying, update Supabase Auth settings:
   - Save button disabled when errors present
   - Dynamic button text: "Fix Errors to Save" when errors exist
 
+**Mobile Optimization (Phase 8 ✅):**
+- **Par 3 Fairway Rule:**
+  - Fairway checkbox hidden on all Par 3 holes (shows "N/A" on desktop, "Fairway: N/A" on mobile)
+  - Correctly implements golf rules (no fairway to hit on Par 3 tee shots)
+  - Applied to both desktop table view and mobile card view
+
+- **Score Entry Mobile Optimization:**
+  - Responsive card-based layout for mobile (switches from table at md breakpoint)
+  - Large touch targets for all inputs:
+    * Score/Putts inputs: py-3 (12px) padding on mobile vs py-1 on desktop
+    * Checkboxes: h-5 w-5 (20px) on mobile vs h-4 w-4 (16px) on desktop
+    * Text sizes: text-lg on mobile inputs, text-base on mobile labels
+  - Course/Tee/Date dropdowns: py-3 on mobile, py-2 on desktop
+  - Save button: Full-width with py-4 padding on mobile, prominent placement
+  - Sticky navigation header (sticky top-0 z-10) for easy access while scrolling
+  - Mobile card shows: Hole number, Par, Score display, Score/Putts inputs, Fairway/GIR checkboxes
+  - Color-coded score inputs with real-time visual feedback (same colors as desktop)
+
+- **Dashboard Navigation Mobile:**
+  - Responsive navigation with separate desktop/mobile layouts
+  - Desktop: Full horizontal menu (Events, Courses, Profile, Admin, Username, Sign Out)
+  - Mobile: Simplified header with logo, profile icon button, and Sign Out button
+  - Logo clickable on all screen sizes to return to dashboard
+  - Hidden hamburger menu structure (expandable in future)
+
+- **Auth Pages Mobile:**
+  - Login/Register buttons: py-3 on mobile (larger), py-2 on desktop
+  - Improved rounded corners (rounded-lg vs rounded-md)
+  - Better text sizing (text-base on mobile, text-sm on desktop)
+  - Logo already optimized at h-24 for mobile visibility
+  - Touch-friendly checkbox sizes throughout
+
+- **Responsive Patterns Used:**
+  - Mobile-first Tailwind approach with sm:, md:, lg: breakpoints
+  - hidden md:block pattern for desktop-only content
+  - md:hidden pattern for mobile-only content
+  - flex-col sm:flex-row for vertical stacking on mobile
+  - grid-cols-1 md:grid-cols-3 for responsive grids
+  - py-3 sm:py-2 pattern for larger mobile touch targets
+
 **Sample Data:**
 - 3 seeded golf courses with full hole data
 - Multiple tee boxes per course
@@ -566,7 +606,9 @@ After deploying, update Supabase Auth settings:
 - Team competitions and management
 - Team scoring (best ball, scramble, aggregate)
 - Team leaderboards
-- Mobile optimization and PWA features
+- Advanced PWA features (offline mode, install to home screen)
+- Mobile menu drawer with full navigation
+- Haptic feedback and mobile-specific interactions
 
 ## Quick Start Guide
 
@@ -615,6 +657,47 @@ After deploying, update Supabase Auth settings:
 ---
 
 **Last Updated**: 2025-01-12
-**Phase**: Phase 1-7 Complete + Quick Wins ✅ (Authentication, Profile, Events, Score Entry, Calendar, Pairings, Handicaps, Leaderboards, Statistics, Draft Saving, Validation)
+**Phase**: Phase 1-8 Complete ✅ (Authentication, Profile, Events, Score Entry, Calendar, Pairings, Handicaps, Leaderboards, Statistics, Draft Saving, Validation, Mobile Optimization)
 **Production URL**: Deployed on Vercel
 **Repository**: https://github.com/robertkeele/go4thepin
+
+## Recent Changes Log
+
+### 2025-01-12 - Mobile Optimization & Par 3 Fairway Rule
+**Files Modified:**
+- `src/pages/rounds/EnterScorePage.vue`
+  - Added Par 3 fairway rule (hides fairway checkbox when par === 3)
+  - Implemented mobile-responsive card layout for score entry
+  - Increased touch target sizes (inputs, checkboxes, buttons)
+  - Made navigation sticky for better mobile UX
+  - Enhanced form controls with larger mobile padding
+
+- `src/pages/dashboard/DashboardPage.vue`
+  - Split navigation into desktop and mobile versions
+  - Desktop: Full horizontal menu with all links
+  - Mobile: Simplified with logo, profile icon, sign out
+  - Made logo clickable to return to dashboard
+
+- `src/pages/auth/LoginPage.vue`
+  - Increased button padding on mobile (py-3 vs py-2)
+  - Improved rounded corners (rounded-lg)
+  - Enhanced text sizing for mobile
+
+- `src/pages/auth/RegisterPage.vue`
+  - Increased button padding on mobile (py-3 vs py-2)
+  - Improved rounded corners (rounded-lg)
+  - Enhanced text sizing for mobile
+
+**Key Features:**
+- ✅ Par 3 holes no longer show fairway checkbox
+- ✅ Mobile score entry uses card-based layout instead of table
+- ✅ Touch targets 25-50% larger on mobile devices
+- ✅ Sticky navigation on score entry page
+- ✅ Responsive navigation that adapts to screen size
+- ✅ Consistent mobile-first design patterns
+
+**Testing Notes:**
+- Test on mobile devices or browser dev tools at 375px width
+- Verify Par 3 fairway behavior (holes 2, 5, 8, 11, 14, 17 are typically Par 3s)
+- Check touch target sizes feel comfortable on actual mobile devices
+- Verify navigation works smoothly on small screens

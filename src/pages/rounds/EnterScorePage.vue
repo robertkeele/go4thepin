@@ -430,17 +430,17 @@ onMounted(() => {
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Navigation Header -->
-    <nav class="bg-white shadow-sm">
+    <nav class="bg-white shadow-sm sticky top-0 z-10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-          <div class="flex items-center space-x-4">
+        <div class="flex justify-between h-14 sm:h-16">
+          <div class="flex items-center space-x-2 sm:space-x-4">
             <button
               @click="router.push('/dashboard')"
-              class="text-gray-500 hover:text-gray-700"
+              class="text-gray-500 hover:text-gray-700 p-2 -ml-2"
             >
               ← Back
             </button>
-            <h1 class="text-2xl font-bold text-gray-900">Enter Score</h1>
+            <h1 class="text-lg sm:text-2xl font-bold text-gray-900">Enter Score</h1>
           </div>
         </div>
       </div>
@@ -501,7 +501,7 @@ onMounted(() => {
         </div>
 
         <!-- Round Details Form -->
-        <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="bg-white shadow rounded-lg p-4 sm:p-6 mb-6">
           <h2 class="text-lg font-medium text-gray-900 mb-4">Round Details</h2>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -514,7 +514,7 @@ onMounted(() => {
                 id="course"
                 v-model="selectedCourseId"
                 @change="handleCourseChange"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                class="w-full px-3 py-3 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 :disabled="isLoading"
               >
                 <option value="">Select a course</option>
@@ -532,7 +532,7 @@ onMounted(() => {
               <select
                 id="teebox"
                 v-model="selectedTeeBoxId"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                class="w-full px-3 py-3 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 :disabled="!selectedCourseId"
               >
                 <option value="">Select a tee box</option>
@@ -551,24 +551,24 @@ onMounted(() => {
                 id="date"
                 v-model="playedDate"
                 type="date"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                class="w-full px-3 py-3 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
           </div>
 
           <!-- Post for Handicap -->
           <div class="mt-4">
-            <label class="flex items-center">
+            <label class="flex items-start sm:items-center cursor-pointer">
               <input
                 v-model="postForHandicap"
                 type="checkbox"
-                class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                class="h-5 w-5 mt-0.5 sm:mt-0 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
               />
-              <span class="ml-2 text-sm text-gray-700">
+              <span class="ml-3 text-sm sm:text-sm text-gray-700">
                 Post this round for handicap calculation
               </span>
             </label>
-            <p class="mt-1 text-xs text-gray-500">
+            <p class="mt-1 ml-8 text-xs text-gray-500">
               Your round will be used to calculate your USGA Handicap Index
             </p>
           </div>
@@ -630,8 +630,8 @@ onMounted(() => {
             </div>
           </div>
 
-          <!-- Score Grid -->
-          <div class="overflow-x-auto">
+          <!-- Score Grid - Desktop View -->
+          <div class="hidden md:block overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
@@ -676,10 +676,12 @@ onMounted(() => {
                   </td>
                   <td class="px-3 py-3 whitespace-nowrap">
                     <input
+                      v-if="holeScore.par !== 3"
                       v-model="holeScore.fairwayHit"
                       type="checkbox"
                       class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                     />
+                    <span v-else class="text-xs text-gray-400">N/A</span>
                   </td>
                   <td class="px-3 py-3 whitespace-nowrap">
                     <input
@@ -700,21 +702,88 @@ onMounted(() => {
             </table>
           </div>
 
+          <!-- Score Grid - Mobile View (Card Layout) -->
+          <div class="md:hidden space-y-4">
+            <div v-for="(holeScore, index) in holeScores" :key="holeScore.holeId"
+              class="bg-gray-50 rounded-lg p-4 border border-gray-200"
+            >
+              <div class="flex justify-between items-center mb-3">
+                <div class="flex items-center space-x-3">
+                  <span class="text-lg font-bold text-gray-900">Hole {{ holeScore.holeNumber }}</span>
+                  <span class="text-sm text-gray-500">Par {{ holeScore.par }}</span>
+                </div>
+                <div :class="['text-xl font-bold', getScoreColor(holeScore.strokes, holeScore.par)]">
+                  {{ holeScore.strokes }}
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Score</label>
+                  <input
+                    v-model.number="holeScore.strokes"
+                    type="number"
+                    min="1"
+                    max="15"
+                    :class="[
+                      'w-full px-4 py-3 border rounded-lg text-center text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-primary-500',
+                      getScoreColor(holeScore.strokes, holeScore.par),
+                      holeScore.strokes < 1 || holeScore.strokes > 15 ? 'border-red-500' : 'border-gray-300'
+                    ]"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Putts</label>
+                  <input
+                    v-model.number="holeScore.putts"
+                    type="number"
+                    min="0"
+                    max="10"
+                    placeholder="-"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+              </div>
+
+              <div class="flex space-x-4 mt-3">
+                <label v-if="holeScore.par !== 3" class="flex items-center space-x-2 py-2">
+                  <input
+                    v-model="holeScore.fairwayHit"
+                    type="checkbox"
+                    class="h-5 w-5 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  />
+                  <span class="text-sm text-gray-700">Fairway</span>
+                </label>
+                <div v-else class="flex items-center space-x-2 py-2 text-gray-400">
+                  <span class="text-sm">Fairway: N/A</span>
+                </div>
+                <label class="flex items-center space-x-2 py-2">
+                  <input
+                    v-model="holeScore.gir"
+                    type="checkbox"
+                    class="h-5 w-5 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  />
+                  <span class="text-sm text-gray-700">GIR</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
           <!-- Save and Clear Draft Buttons -->
-          <div class="mt-6 flex justify-between items-center">
+          <div class="mt-6 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
             <button
               v-if="hasSavedDraft"
               @click="clearDraft"
-              class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+              class="px-4 py-3 text-sm text-gray-600 hover:text-gray-800 transition-colors order-2 sm:order-1"
             >
               Clear Draft
             </button>
-            <div v-else></div>
+            <div v-else class="order-2 sm:order-1"></div>
             <button
               @click="saveRound"
               :disabled="isSaving || !selectedCourseId || !selectedTeeBoxId || hasErrors"
               :class="[
-                'px-6 py-3 font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors',
+                'px-6 py-4 sm:py-3 text-base sm:text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors order-1 sm:order-2',
                 hasErrors
                   ? 'bg-gray-400 text-white cursor-not-allowed'
                   : 'bg-primary-600 text-white hover:bg-primary-700',

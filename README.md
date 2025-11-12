@@ -60,6 +60,16 @@ A modern web application for managing golf leagues, tracking scores, calculating
 - **Performance Metrics** - Best/worst rounds, average scores, and improvement trends
 - **Visual Charts** - Progress bars and graphs for easy analysis
 
+### Mobile Optimization (Phase 8 ✅)
+- **Par 3 Fairway Rule** - Automatically hides fairway checkbox on Par 3 holes (golf rules compliant)
+- **Responsive Score Entry** - Card-based layout on mobile with large touch targets
+- **Touch-Friendly Inputs** - 25-50% larger buttons, checkboxes, and input fields on mobile
+- **Mobile Navigation** - Simplified navigation header for small screens with quick access to profile
+- **Sticky Navigation** - Score entry nav stays at top while scrolling
+- **Mobile-First Design** - Tailwind responsive patterns (sm:, md:, lg: breakpoints)
+- **Optimized Auth Flow** - Larger login/register buttons with improved touch targets
+- **Responsive Grid Layouts** - Automatic stacking on mobile, multi-column on desktop
+
 ## Project Structure
 
 ```
