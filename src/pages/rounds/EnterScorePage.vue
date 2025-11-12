@@ -193,10 +193,11 @@ const saveRound = async () => {
       .single()
 
     if (roundError) throw roundError
+    if (!roundData) throw new Error('Failed to create round')
 
     // Create hole-by-hole scores
     const scoresData = holeScores.value.map(hs => ({
-      round_id: roundData.id,
+      round_id: (roundData as any).id,
       hole_id: hs.holeId,
       strokes: hs.strokes,
       putts: hs.putts,
