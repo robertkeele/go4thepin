@@ -84,6 +84,16 @@ A modern web application for managing golf leagues, tracking scores, calculating
 - Historical handicap tracking
 - Fields: user_id, handicap_index, calculated_date, rounds_used
 
+#### event_pairings
+- Generated pairings/groups for events
+- Fields: event_id, group_number, tee_time, starting_hole, notes, is_finalized
+- Used for organizing players into tee time groups
+
+#### pairing_members
+- Players assigned to each pairing group
+- Fields: pairing_id, user_id, position
+- Links players to their assigned groups
+
 ## Authentication System
 
 ### Implementation Status: ✅ Complete
@@ -183,7 +193,8 @@ golf-league-app/
 │   ├── migrations/
 │   │   ├── 001_initial_schema.sql       # Database tables
 │   │   ├── 002_row_level_security.sql   # RLS policies
-│   │   └── 003_seed_data.sql            # Sample courses
+│   │   ├── 003_seed_data.sql            # Sample courses
+│   │   └── 004_pairings_and_tee_times.sql # Pairing tables
 │   └── README.md
 ├── .env                 # Supabase credentials (gitignored)
 ├── .env.example
@@ -219,17 +230,18 @@ npm run dev
 ```
 
 ### Database Migrations
-**Status**: ✅ Complete - All 3 migration files have been run and verified
+**Status**: ✅ Migrations 1-3 Complete, Migration 4 Ready
 
 Migration files applied:
-1. `001_initial_schema.sql` - Database tables created
-2. `002_row_level_security.sql` - RLS policies applied
-3. `003_seed_data.sql` - Sample courses seeded
+1. `001_initial_schema.sql` - Database tables created ✅
+2. `002_row_level_security.sql` - RLS policies applied ✅
+3. `003_seed_data.sql` - Sample courses seeded ✅
+4. `004_pairings_and_tee_times.sql` - Pairing tables (needs to be run)
 
-To apply migrations (already completed):
+To apply migration 004:
 1. Go to Supabase SQL Editor
-2. Run migrations in order (001, 002, 003)
-3. Verify tables created
+2. Run the contents of `004_pairings_and_tee_times.sql`
+3. Verify event_pairings and pairing_members tables created
 
 ### Making a User Admin
 ```sql
@@ -263,8 +275,8 @@ WHERE email = 'user@example.com';
 - [x] Event registration/unregistration
 - [x] Participant list with handicaps
 - [x] Registration count and limits
-- [ ] Pairing generation (pending)
-- [ ] Event calendar view (pending)
+- [x] Pairing generation (admin only)
+- [x] Event calendar view
 
 ### Phase 4: Score Entry ✅ Complete
 - [x] Score entry form (hole-by-hole)
@@ -437,6 +449,13 @@ After deploying, update Supabase Auth settings:
 - Participant list with handicaps
 - Registration counts and limits
 - Event status tracking
+- Event calendar view (`/events-calendar`) - monthly grid display
+- Calendar view with color-coded events by type
+- Registration status indicators on calendar
+- Pairing generation (admin only) - automated tee time grouping
+- Configurable group sizes (2-4 players)
+- Shotgun start or sequential tee times
+- Finalize/regenerate/delete pairings
 
 **Score Entry & History:**
 - Score entry page (`/rounds/enter`)
@@ -473,16 +492,17 @@ After deploying, update Supabase Auth settings:
 - USGA handicap calculation system
 - Event leaderboards with real-time updates
 - Team competitions and management
-- Event pairing generation
+- Score validation and differential calculation
 
 ## Quick Start Guide
 
 ### For Members:
 1. Register at `/register` with email/password
 2. Fill in your profile at `/profile` (name, GHIN, handicap)
-3. Browse events at `/events` and register for upcoming tournaments
-4. Enter your scores at `/rounds/enter` after playing
-5. View your round history at `/rounds/history`
+3. Browse events at `/events` or view calendar at `/events-calendar`
+4. Register for upcoming tournaments
+5. Enter your scores at `/rounds/enter` after playing
+6. View your round history at `/rounds/history`
 
 ### For Admins:
 1. Update your role to 'admin' via Supabase SQL:
@@ -491,17 +511,19 @@ After deploying, update Supabase Auth settings:
    ```
 2. Access admin features from dashboard or navigation
 3. Create and manage events at `/events/create`
-4. Create and manage courses at `/courses/create`
-5. Manage users and roles at `/admin/users`
-6. All member features plus admin capabilities
+4. Generate pairings for events (tee time groups)
+5. Create and manage courses at `/courses/create`
+6. Manage users and roles at `/admin/users`
+7. All member features plus admin capabilities
 
 ### Key Routes:
 - `/login` - Sign in
 - `/register` - Create account
 - `/dashboard` - Main dashboard with quick actions
 - `/profile` - View/edit your profile
-- `/events` - Browse all events
-- `/events/:id` - Event details and registration
+- `/events` - Browse all events (list view)
+- `/events-calendar` - Browse events (calendar view)
+- `/events/:id` - Event details, registration, and pairings
 - `/events/create` - Create new event (admin)
 - `/courses` - Browse all courses
 - `/courses/:id` - Course details and scorecard
@@ -513,6 +535,6 @@ After deploying, update Supabase Auth settings:
 ---
 
 **Last Updated**: 2025-01-11
-**Phase**: Phase 1-4 Complete ✅ (Authentication, Profile, Events, Score Entry)
+**Phase**: Phase 1-4 Complete ✅ (Authentication, Profile, Events, Score Entry, Calendar, Pairings)
 **Production URL**: Deployed on Vercel
 **Repository**: https://github.com/robertkeele/go4thepin
