@@ -84,19 +84,21 @@ const loadRoundScores = async (roundId: string) => {
         hole:holes(hole_number, par)
       `)
       .eq('round_id', roundId)
-      .order('hole.hole_number', { ascending: true })
 
     if (error) throw error
     if (!data) return
 
-    holeScores.value = data.map((score: any) => ({
-      holeNumber: score.hole.hole_number,
-      par: score.hole.par,
-      strokes: score.strokes,
-      putts: score.putts,
-      fairwayHit: score.fairway_hit,
-      gir: score.gir
-    }))
+    // Map and sort by hole number
+    holeScores.value = data
+      .map((score: any) => ({
+        holeNumber: score.hole.hole_number,
+        par: score.hole.par,
+        strokes: score.strokes,
+        putts: score.putts,
+        fairwayHit: score.fairway_hit,
+        gir: score.gir
+      }))
+      .sort((a, b) => a.holeNumber - b.holeNumber)
   } catch (error: any) {
     errorMessage.value = `Failed to load scores: ${error.message}`
   } finally {
