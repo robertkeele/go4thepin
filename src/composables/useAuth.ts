@@ -127,27 +127,41 @@ export const useAuth = () => {
    */
   const fetchUserProfile = async (userId: string) => {
     try {
+      type ProfileRow = {
+        id: string
+        email: string
+        first_name: string | null
+        last_name: string | null
+        phone: string | null
+        ghin_number: string | null
+        role: 'admin' | 'member' | 'viewer'
+        current_handicap_index: number | null
+        avatar_url: string | null
+        created_at: string
+        updated_at: string
+      }
+
       const { data, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single()
+        .single<ProfileRow>()
 
       if (profileError) throw profileError
 
       if (data) {
         user.value = {
-          id: data.id as string,
-          email: data.email as string,
-          firstName: (data.first_name as string) || '',
-          lastName: (data.last_name as string) || '',
-          phone: (data.phone as string) || undefined,
-          ghinNumber: (data.ghin_number as string) || undefined,
-          role: data.role as 'admin' | 'member' | 'viewer',
-          currentHandicapIndex: (data.current_handicap_index as number) || undefined,
-          avatarUrl: (data.avatar_url as string) || undefined,
-          createdAt: data.created_at as string,
-          updatedAt: data.updated_at as string,
+          id: data.id,
+          email: data.email,
+          firstName: data.first_name || '',
+          lastName: data.last_name || '',
+          phone: data.phone || undefined,
+          ghinNumber: data.ghin_number || undefined,
+          role: data.role,
+          currentHandicapIndex: data.current_handicap_index || undefined,
+          avatarUrl: data.avatar_url || undefined,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at,
         }
       }
     } catch (err) {
@@ -161,14 +175,17 @@ export const useAuth = () => {
    */
   const updateProfile = async (userId: string, updates: { firstName?: string; lastName?: string; phone?: string; ghinNumber?: string }) => {
     try {
+      const updateData = {
+        first_name: updates.firstName,
+        last_name: updates.lastName,
+        phone: updates.phone,
+        ghin_number: updates.ghinNumber,
+      }
+
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({
-          first_name: updates.firstName,
-          last_name: updates.lastName,
-          phone: updates.phone,
-          ghin_number: updates.ghinNumber,
-        })
+        // @ts-ignore - Supabase v2.45.4 type inference limitation
+        .update(updateData)
         .eq('id', userId)
 
       if (updateError) throw updateError
