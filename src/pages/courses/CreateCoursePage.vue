@@ -179,23 +179,52 @@ const prevStep = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <!-- Back Button -->
-      <button
-        @click="router.push({ name: 'courses' })"
-        class="mb-6 inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
-      >
-        <svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-        Back to Courses
-      </button>
+  <div class="min-h-screen bg-gray-50">
+    <!-- Navigation Header -->
+    <nav class="bg-white shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <button
+              @click="router.push({ name: 'courses' })"
+              class="text-gray-600 hover:text-gray-900 mr-4"
+            >
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h1 class="text-2xl font-bold text-gray-900">Create New Course</h1>
+          </div>
+          <div class="flex items-center space-x-4">
+            <button
+              @click="router.push('/dashboard')"
+              class="text-sm text-gray-700 hover:text-gray-900 font-medium"
+            >
+              Dashboard
+            </button>
+            <span class="text-gray-300">|</span>
+            <button
+              @click="router.push('/courses')"
+              class="text-sm text-gray-700 hover:text-gray-900 font-medium"
+            >
+              Courses
+            </button>
+            <span class="text-gray-300">|</span>
+            <button
+              @click="router.push('/admin/users')"
+              class="text-sm text-purple-700 hover:text-purple-900 font-medium"
+            >
+              Admin
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
 
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Create New Course</h1>
-        <p class="mt-2 text-sm text-gray-600">
+        <p class="text-sm text-gray-600">
           Add a new golf course to the system
         </p>
       </div>

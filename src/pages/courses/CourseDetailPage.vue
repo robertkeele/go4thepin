@@ -185,18 +185,51 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <!-- Back Button -->
-      <button
-        @click="router.push({ name: 'courses' })"
-        class="mb-6 inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
-      >
-        <svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-        Back to Courses
-      </button>
+  <div class="min-h-screen bg-gray-50">
+    <!-- Navigation Header -->
+    <nav class="bg-white shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <button
+              @click="router.push({ name: 'courses' })"
+              class="text-gray-600 hover:text-gray-900 mr-4"
+            >
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h1 class="text-2xl font-bold text-gray-900">Course Details</h1>
+          </div>
+          <div class="flex items-center space-x-4">
+            <button
+              @click="router.push('/dashboard')"
+              class="text-sm text-gray-700 hover:text-gray-900 font-medium"
+            >
+              Dashboard
+            </button>
+            <span class="text-gray-300">|</span>
+            <button
+              @click="router.push('/courses')"
+              class="text-sm text-gray-700 hover:text-gray-900 font-medium"
+            >
+              Courses
+            </button>
+            <template v-if="authStore.isAdmin">
+              <span class="text-gray-300">|</span>
+              <button
+                @click="router.push('/admin/users')"
+                class="text-sm text-purple-700 hover:text-purple-900 font-medium"
+              >
+                Admin
+              </button>
+            </template>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
       <!-- Error Message -->
       <div v-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">

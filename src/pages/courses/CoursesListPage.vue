@@ -76,13 +76,55 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="min-h-screen bg-gray-50">
+    <!-- Navigation Header -->
+    <nav class="bg-white shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <button
+              @click="router.push('/dashboard')"
+              class="text-gray-600 hover:text-gray-900 mr-4"
+            >
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+            </button>
+            <h1 class="text-2xl font-bold text-gray-900">Golf Courses</h1>
+          </div>
+          <div class="flex items-center space-x-4">
+            <button
+              @click="router.push('/dashboard')"
+              class="text-sm text-gray-700 hover:text-gray-900 font-medium"
+            >
+              Dashboard
+            </button>
+            <span class="text-gray-300">|</span>
+            <button
+              @click="router.push('/events')"
+              class="text-sm text-gray-700 hover:text-gray-900 font-medium"
+            >
+              Events
+            </button>
+            <template v-if="authStore.isAdmin">
+              <span class="text-gray-300">|</span>
+              <button
+                @click="router.push('/admin/users')"
+                class="text-sm text-purple-700 hover:text-purple-900 font-medium"
+              >
+                Admin
+              </button>
+            </template>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Header -->
       <div class="flex justify-between items-center mb-8">
         <div>
-          <h1 class="text-3xl font-bold text-gray-900">Golf Courses</h1>
-          <p class="mt-2 text-sm text-gray-600">
+          <p class="text-sm text-gray-600">
             Browse all available golf courses
           </p>
         </div>
