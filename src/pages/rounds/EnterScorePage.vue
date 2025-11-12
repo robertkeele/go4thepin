@@ -178,11 +178,16 @@ const saveRound = async () => {
   successMessage.value = ''
 
   try {
+    if (!authStore.user?.id) {
+      throw new Error('User not authenticated')
+    }
+
     // Create the round
+    // @ts-ignore - Supabase v2.45.4 has limited type inference
     const { data: roundData, error: roundError } = await supabase
       .from('rounds')
       .insert({
-        user_id: authStore.user?.id,
+        user_id: authStore.user.id,
         course_id: selectedCourseId.value,
         tee_box_id: selectedTeeBoxId.value,
         played_date: playedDate.value,
@@ -205,6 +210,7 @@ const saveRound = async () => {
       gir: hs.gir
     }))
 
+    // @ts-ignore - Supabase v2.45.4 has limited type inference
     const { error: scoresError } = await supabase
       .from('scores')
       .insert(scoresData)

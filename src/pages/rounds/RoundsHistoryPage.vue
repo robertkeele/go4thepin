@@ -21,6 +21,12 @@ const loadRounds = async () => {
   errorMessage.value = ''
 
   try {
+    if (!authStore.user?.id) {
+      errorMessage.value = 'User not authenticated'
+      isLoading.value = false
+      return
+    }
+
     const { data, error } = await supabase
       .from('rounds')
       .select(`
@@ -28,7 +34,7 @@ const loadRounds = async () => {
         course:courses(name),
         tee_box:tee_boxes(name, color)
       `)
-      .eq('user_id', authStore.user?.id)
+      .eq('user_id', authStore.user.id)
       .order('played_date', { ascending: false })
 
     if (error) throw error
