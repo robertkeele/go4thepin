@@ -38,6 +38,30 @@ const router = createRouter({
       component: () => import('@/pages/rounds/RoundsHistoryPage.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('@/pages/profile/ProfilePage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/events',
+      name: 'events',
+      component: () => import('@/pages/events/EventsListPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/events/create',
+      name: 'create-event',
+      component: () => import('@/pages/events/CreateEventPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/events/:id',
+      name: 'event-detail',
+      component: () => import('@/pages/events/EventDetailPage.vue'),
+      meta: { requiresAuth: true },
+    },
     // Add more protected routes here
   ],
 })

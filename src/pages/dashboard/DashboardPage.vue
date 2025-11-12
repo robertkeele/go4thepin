@@ -21,8 +21,15 @@ const handleSignOut = async () => {
             <h1 class="text-2xl font-bold text-gray-900">⛳ Golf League</h1>
           </div>
           <div class="flex items-center space-x-4">
+            <button
+              @click="router.push('/profile')"
+              class="text-sm text-gray-700 hover:text-gray-900 font-medium"
+            >
+              My Profile
+            </button>
+            <span class="text-gray-300">|</span>
             <span class="text-sm text-gray-700">
-              Welcome, <span class="font-semibold">{{ authStore.user?.firstName || authStore.user?.email }}</span>
+              <span class="font-semibold">{{ authStore.user?.firstName || authStore.user?.email }}</span>
             </span>
             <button
               @click="handleSignOut"
@@ -88,7 +95,7 @@ const handleSignOut = async () => {
             <!-- Quick Actions -->
             <div class="mt-8">
               <h3 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
-              <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <button
                   @click="router.push('/rounds/enter')"
                   class="bg-primary-50 hover:bg-primary-100 rounded-lg p-4 text-center transition-colors cursor-pointer"
@@ -105,11 +112,22 @@ const handleSignOut = async () => {
                   <h4 class="text-sm font-medium text-gray-900">My Rounds</h4>
                   <p class="mt-1 text-xs text-gray-600">View your history</p>
                 </button>
-                <div class="bg-gray-50 rounded-lg p-4 text-center opacity-50">
-                  <div class="text-3xl mb-2">🏆</div>
-                  <h4 class="text-sm font-medium text-gray-900">Leaderboard</h4>
-                  <p class="mt-1 text-xs text-gray-500">Coming soon</p>
-                </div>
+                <button
+                  @click="router.push('/events')"
+                  class="bg-primary-50 hover:bg-primary-100 rounded-lg p-4 text-center transition-colors cursor-pointer"
+                >
+                  <div class="text-3xl mb-2">📅</div>
+                  <h4 class="text-sm font-medium text-gray-900">Events</h4>
+                  <p class="mt-1 text-xs text-gray-600">Browse and register</p>
+                </button>
+                <button
+                  @click="router.push('/profile')"
+                  class="bg-primary-50 hover:bg-primary-100 rounded-lg p-4 text-center transition-colors cursor-pointer"
+                >
+                  <div class="text-3xl mb-2">👤</div>
+                  <h4 class="text-sm font-medium text-gray-900">My Profile</h4>
+                  <p class="mt-1 text-xs text-gray-600">Edit your info</p>
+                </button>
               </div>
             </div>
           </div>
