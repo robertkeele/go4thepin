@@ -192,8 +192,8 @@ const saveRound = async () => {
       is_posted_for_handicap: false
     }
 
-    const { data: roundData, error: roundError } = await supabase
-      .from('rounds')
+    const { data: roundData, error: roundError } = await (supabase
+      .from('rounds') as any)
       .insert(roundInsertData)
       .select()
       .single()
@@ -211,8 +211,8 @@ const saveRound = async () => {
       gir: hs.gir
     }))
 
-    const { error: scoresError } = await supabase
-      .from('scores')
+    const { error: scoresError } = await (supabase
+      .from('scores') as any)
       .insert(scoresData)
 
     if (scoresError) throw scoresError
