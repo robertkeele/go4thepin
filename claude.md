@@ -252,9 +252,9 @@ WHERE email = 'user@example.com';
 - [x] Profile fields: name, phone, GHIN, handicap
 - [x] View member since date
 - [x] Update profile information
-- [ ] Admin user management (pending)
-- [ ] Course listing and detail pages (pending)
-- [ ] Course management (admin) (pending)
+- [x] Admin user management
+- [x] Course listing and detail pages
+- [x] Course management (admin)
 
 ### Phase 3: Event Management ✅ Complete
 - [x] Event creation (admin only)
@@ -448,6 +448,22 @@ After deploying, update Supabase Auth settings:
 - Color-coded scores (eagle/birdie/par/bogey)
 - Stats summary per round
 
+**Course Management:**
+- Courses listing page (`/courses`) - browse all courses
+- Course detail page (`/courses/:id`) - view full scorecard and details
+- Create course page (`/courses/create`) - 3-step wizard (admin only)
+- Edit course information (admin only)
+- Delete courses (admin only)
+- Tee boxes and hole configuration display
+
+**Admin Features:**
+- User management page (`/admin/users`)
+- View all users with search and filtering
+- Edit user roles (admin/member/viewer)
+- Admin route guards and navigation
+- Admin-only quick actions on dashboard
+- Purple-themed admin UI elements
+
 **Sample Data:**
 - 3 seeded golf courses with full hole data
 - Multiple tee boxes per course
@@ -457,8 +473,6 @@ After deploying, update Supabase Auth settings:
 - USGA handicap calculation system
 - Event leaderboards with real-time updates
 - Team competitions and management
-- Course listing and management (admin)
-- Admin user management dashboard
 - Event pairing generation
 
 ## Quick Start Guide
@@ -475,9 +489,11 @@ After deploying, update Supabase Auth settings:
    ```sql
    UPDATE profiles SET role = 'admin' WHERE email = 'your-email@example.com';
    ```
-2. Create events at `/events/create`
-3. Manage event details and view registrations
-4. All member features plus admin capabilities
+2. Access admin features from dashboard or navigation
+3. Create and manage events at `/events/create`
+4. Create and manage courses at `/courses/create`
+5. Manage users and roles at `/admin/users`
+6. All member features plus admin capabilities
 
 ### Key Routes:
 - `/login` - Sign in
@@ -487,6 +503,10 @@ After deploying, update Supabase Auth settings:
 - `/events` - Browse all events
 - `/events/:id` - Event details and registration
 - `/events/create` - Create new event (admin)
+- `/courses` - Browse all courses
+- `/courses/:id` - Course details and scorecard
+- `/courses/create` - Create new course (admin)
+- `/admin/users` - User management (admin)
 - `/rounds/enter` - Enter a new round
 - `/rounds/history` - View your rounds
 
