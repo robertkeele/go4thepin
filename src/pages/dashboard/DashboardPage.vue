@@ -22,11 +22,34 @@ const handleSignOut = async () => {
           </div>
           <div class="flex items-center space-x-4">
             <button
+              @click="router.push('/events')"
+              class="text-sm text-gray-700 hover:text-gray-900 font-medium"
+            >
+              Events
+            </button>
+            <span class="text-gray-300">|</span>
+            <button
+              @click="router.push('/courses')"
+              class="text-sm text-gray-700 hover:text-gray-900 font-medium"
+            >
+              Courses
+            </button>
+            <span class="text-gray-300">|</span>
+            <button
               @click="router.push('/profile')"
               class="text-sm text-gray-700 hover:text-gray-900 font-medium"
             >
               My Profile
             </button>
+            <template v-if="authStore.isAdmin">
+              <span class="text-gray-300">|</span>
+              <button
+                @click="router.push('/admin/users')"
+                class="text-sm text-purple-700 hover:text-purple-900 font-medium"
+              >
+                Admin
+              </button>
+            </template>
             <span class="text-gray-300">|</span>
             <span class="text-sm text-gray-700">
               <span class="font-semibold">{{ authStore.user?.firstName || authStore.user?.email }}</span>
@@ -121,12 +144,47 @@ const handleSignOut = async () => {
                   <p class="mt-1 text-xs text-gray-600">Browse and register</p>
                 </button>
                 <button
+                  @click="router.push('/courses')"
+                  class="bg-primary-50 hover:bg-primary-100 rounded-lg p-4 text-center transition-colors cursor-pointer"
+                >
+                  <div class="text-3xl mb-2">🏌️</div>
+                  <h4 class="text-sm font-medium text-gray-900">Courses</h4>
+                  <p class="mt-1 text-xs text-gray-600">View golf courses</p>
+                </button>
+                <button
                   @click="router.push('/profile')"
                   class="bg-primary-50 hover:bg-primary-100 rounded-lg p-4 text-center transition-colors cursor-pointer"
                 >
                   <div class="text-3xl mb-2">👤</div>
                   <h4 class="text-sm font-medium text-gray-900">My Profile</h4>
                   <p class="mt-1 text-xs text-gray-600">Edit your info</p>
+                </button>
+                <button
+                  v-if="authStore.isAdmin"
+                  @click="router.push('/admin/users')"
+                  class="bg-purple-50 hover:bg-purple-100 rounded-lg p-4 text-center transition-colors cursor-pointer"
+                >
+                  <div class="text-3xl mb-2">👥</div>
+                  <h4 class="text-sm font-medium text-gray-900">User Management</h4>
+                  <p class="mt-1 text-xs text-gray-600">Manage users & roles</p>
+                </button>
+                <button
+                  v-if="authStore.isAdmin"
+                  @click="router.push('/courses/create')"
+                  class="bg-purple-50 hover:bg-purple-100 rounded-lg p-4 text-center transition-colors cursor-pointer"
+                >
+                  <div class="text-3xl mb-2">➕</div>
+                  <h4 class="text-sm font-medium text-gray-900">Add Course</h4>
+                  <p class="mt-1 text-xs text-gray-600">Create new course</p>
+                </button>
+                <button
+                  v-if="authStore.isAdmin"
+                  @click="router.push('/events/create')"
+                  class="bg-purple-50 hover:bg-purple-100 rounded-lg p-4 text-center transition-colors cursor-pointer"
+                >
+                  <div class="text-3xl mb-2">📆</div>
+                  <h4 class="text-sm font-medium text-gray-900">Create Event</h4>
+                  <p class="mt-1 text-xs text-gray-600">Schedule new event</p>
                 </button>
               </div>
             </div>

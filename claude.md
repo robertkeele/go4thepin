@@ -219,6 +219,14 @@ npm run dev
 ```
 
 ### Database Migrations
+**Status**: ✅ Complete - All 3 migration files have been run and verified
+
+Migration files applied:
+1. `001_initial_schema.sql` - Database tables created
+2. `002_row_level_security.sql` - RLS policies applied
+3. `003_seed_data.sql` - Sample courses seeded
+
+To apply migrations (already completed):
 1. Go to Supabase SQL Editor
 2. Run migrations in order (001, 002, 003)
 3. Verify tables created

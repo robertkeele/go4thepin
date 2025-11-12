@@ -62,7 +62,30 @@ const router = createRouter({
       component: () => import('@/pages/events/EventDetailPage.vue'),
       meta: { requiresAuth: true },
     },
-    // Add more protected routes here
+    {
+      path: '/courses',
+      name: 'courses',
+      component: () => import('@/pages/courses/CoursesListPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/courses/create',
+      name: 'create-course',
+      component: () => import('@/pages/courses/CreateCoursePage.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
+    {
+      path: '/courses/:id',
+      name: 'course-detail',
+      component: () => import('@/pages/courses/CourseDetailPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/admin/users',
+      name: 'admin-users',
+      component: () => import('@/pages/admin/UsersManagementPage.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
   ],
 })
 
@@ -77,11 +100,18 @@ router.beforeEach(async (to, from, next) => {
 
   const requiresAuth = to.meta.requiresAuth
   const requiresGuest = to.meta.requiresGuest
+  const requiresAdmin = to.meta.requiresAdmin
   const isAuthenticated = authStore.isAuthenticated
 
   // If route requires authentication and user is not authenticated
   if (requiresAuth && !isAuthenticated) {
     next({ name: 'login', query: { redirect: to.fullPath } })
+    return
+  }
+
+  // If route requires admin and user is not admin
+  if (requiresAdmin && !authStore.isAdmin) {
+    next({ name: 'dashboard' })
     return
   }
 
