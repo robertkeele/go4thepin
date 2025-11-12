@@ -59,7 +59,7 @@ const saveProfile = async () => {
     if (error) throw error
 
     // Update local auth store
-    await authStore.fetchUserProfile()
+    await authStore.fetchUserProfile(authStore.user.id)
 
     successMessage.value = 'Profile updated successfully!'
     isEditing.value = false

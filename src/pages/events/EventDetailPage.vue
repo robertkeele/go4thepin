@@ -52,22 +52,24 @@ const loadEvent = async () => {
     if (error) throw error
     if (!data) throw new Error('Event not found')
 
+    const eventData = data as any
+
     event.value = {
-      id: data.id,
-      name: data.name,
-      description: data.description,
-      eventDate: data.event_date,
-      startTime: data.start_time,
-      courseId: data.course_id,
-      teeBoxId: data.tee_box_id,
-      scoringFormat: data.scoring_format,
-      eventType: data.event_type,
-      isTeamEvent: data.is_team_event,
-      maxParticipants: data.max_participants,
-      status: data.status,
-      createdBy: data.created_by,
-      course: data.course,
-      teeBox: data.tee_box
+      id: eventData.id,
+      name: eventData.name,
+      description: eventData.description,
+      eventDate: eventData.event_date,
+      startTime: eventData.start_time,
+      courseId: eventData.course_id,
+      teeBoxId: eventData.tee_box_id,
+      scoringFormat: eventData.scoring_format,
+      eventType: eventData.event_type,
+      isTeamEvent: eventData.is_team_event,
+      maxParticipants: eventData.max_participants,
+      status: eventData.status,
+      createdBy: eventData.created_by,
+      course: eventData.course,
+      teeBox: eventData.tee_box
     }
 
     await loadParticipants()
