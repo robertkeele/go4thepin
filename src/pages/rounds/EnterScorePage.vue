@@ -183,17 +183,18 @@ const saveRound = async () => {
     }
 
     // Create the round
-    // @ts-ignore - Supabase v2.45.4 has limited type inference
+    const roundInsertData: any = {
+      user_id: authStore.user.id,
+      course_id: selectedCourseId.value,
+      tee_box_id: selectedTeeBoxId.value,
+      played_date: playedDate.value,
+      total_score: totalScore.value,
+      is_posted_for_handicap: false
+    }
+
     const { data: roundData, error: roundError } = await supabase
       .from('rounds')
-      .insert({
-        user_id: authStore.user.id,
-        course_id: selectedCourseId.value,
-        tee_box_id: selectedTeeBoxId.value,
-        played_date: playedDate.value,
-        total_score: totalScore.value,
-        is_posted_for_handicap: false
-      })
+      .insert(roundInsertData)
       .select()
       .single()
 
@@ -201,7 +202,7 @@ const saveRound = async () => {
     if (!roundData) throw new Error('Failed to create round')
 
     // Create hole-by-hole scores
-    const scoresData = holeScores.value.map(hs => ({
+    const scoresData: any = holeScores.value.map(hs => ({
       round_id: (roundData as any).id,
       hole_id: hs.holeId,
       strokes: hs.strokes,
@@ -210,7 +211,6 @@ const saveRound = async () => {
       gir: hs.gir
     }))
 
-    // @ts-ignore - Supabase v2.45.4 has limited type inference
     const { error: scoresError } = await supabase
       .from('scores')
       .insert(scoresData)
