@@ -415,7 +415,7 @@ After deploying, update Supabase Auth settings:
 
 ## Current Status Summary
 
-✅ **Completed (Phase 1-4)**:
+✅ **Completed (Phase 1-7)**:
 
 **Foundation:**
 - Vue 3 project setup with TypeScript
@@ -440,6 +440,7 @@ After deploying, update Supabase Auth settings:
 - Edit personal information (name, phone, GHIN, handicap)
 - View member since date
 - Profile link in navigation
+- Handicap widget with trend display
 
 **Events Management:**
 - Events listing page (`/events`) with filters
@@ -462,6 +463,7 @@ After deploying, update Supabase Auth settings:
 - Hole-by-hole score input (18 holes)
 - Track strokes, putts, fairways hit, GIR
 - Real-time score calculation
+- "Post for Handicap" checkbox integration
 - Rounds history page (`/rounds/history`)
 - Expandable scorecards (front 9, back 9)
 - Color-coded scores (eagle/birdie/par/bogey)
@@ -483,16 +485,56 @@ After deploying, update Supabase Auth settings:
 - Admin-only quick actions on dashboard
 - Purple-themed admin UI elements
 
+**Handicap System (Phase 6 ✅):**
+- USGA-compliant handicap calculation (`utils/handicap.ts`)
+- Score differential calculation: (113 / Slope) × (AGS - Course Rating)
+- Handicap index from best 8 of 20 rounds
+- Course handicap calculation by tee box
+- Equitable Stroke Control (ESC) for adjusted scores
+- Handicap composable (`composables/useHandicap.ts`)
+- Automatic handicap updates when rounds posted
+- Handicap history tracking in database
+- HandicapWidget component with visual trends
+- Handicap widget on dashboard and profile
+- Mini-chart showing handicap history
+- Trend indicators (up/down arrows)
+- Admin recalculation function for all users
+
+**Leaderboards & Real-time (Phase 7 ✅):**
+- Event leaderboard page (`/leaderboards/events/:id`)
+- Real-time updates using Supabase Realtime subscriptions
+- Live connection indicator with animated pulse
+- Auto-refresh on INSERT/UPDATE/DELETE of rounds
+- Gross/net score toggle
+- Position tracking with proper tie handling
+- Medal badges for top 3 (🥇🥈🥉)
+- Score-to-par display with color coding
+- Season standings with aggregated averages
+- Leaderboard composables (`composables/useLeaderboard.ts`)
+- Real-time composable (`composables/useRealtimeLeaderboard.ts`)
+- Manual refresh capability
+
+**Statistics & Analytics (Phase 7 ✅):**
+- Personal statistics page (`/stats`)
+- Statistics composable (`composables/useStats.ts`)
+- Comprehensive performance tracking
+- Scoring distribution (eagles, birdies, pars, bogeys, double+)
+- Visual progress bars with percentages
+- Recent form (last 5 rounds) table
+- Best/worst round tracking
+- Average score calculations
+- Performance trends over time
+
 **Sample Data:**
 - 3 seeded golf courses with full hole data
 - Multiple tee boxes per course
 - Ready for immediate testing
 
-📋 **Next Up (Phase 5-7)**:
-- USGA handicap calculation system
-- Event leaderboards with real-time updates
+📋 **Next Up (Phase 8+)**:
 - Team competitions and management
-- Score validation and differential calculation
+- Team scoring (best ball, scramble, aggregate)
+- Team leaderboards
+- Mobile optimization and PWA features
 
 ## Quick Start Guide
 
@@ -502,7 +544,11 @@ After deploying, update Supabase Auth settings:
 3. Browse events at `/events` or view calendar at `/events-calendar`
 4. Register for upcoming tournaments
 5. Enter your scores at `/rounds/enter` after playing
-6. View your round history at `/rounds/history`
+6. **Check "Post for Handicap"** to have your round count toward handicap calculation
+7. View your round history at `/rounds/history` with detailed scorecards
+8. **Track your handicap** on dashboard and profile with visual trend indicators
+9. **View event leaderboards** at `/leaderboards/events/:id` with live updates
+10. **Check your statistics** at `/stats` to see scoring distribution and performance trends
 
 ### For Admins:
 1. Update your role to 'admin' via Supabase SQL:
@@ -519,22 +565,24 @@ After deploying, update Supabase Auth settings:
 ### Key Routes:
 - `/login` - Sign in
 - `/register` - Create account
-- `/dashboard` - Main dashboard with quick actions
-- `/profile` - View/edit your profile
+- `/dashboard` - Main dashboard with quick actions and handicap widget
+- `/profile` - View/edit your profile with handicap history
 - `/events` - Browse all events (list view)
 - `/events-calendar` - Browse events (calendar view)
 - `/events/:id` - Event details, registration, and pairings
 - `/events/create` - Create new event (admin)
+- `/leaderboards/events/:id` - Live event leaderboard with real-time updates
+- `/stats` - Personal statistics and performance tracking
 - `/courses` - Browse all courses
 - `/courses/:id` - Course details and scorecard
 - `/courses/create` - Create new course (admin)
 - `/admin/users` - User management (admin)
-- `/rounds/enter` - Enter a new round
-- `/rounds/history` - View your rounds
+- `/rounds/enter` - Enter a new round with handicap posting
+- `/rounds/history` - View your rounds with detailed scorecards
 
 ---
 
-**Last Updated**: 2025-01-11
-**Phase**: Phase 1-4 Complete ✅ (Authentication, Profile, Events, Score Entry, Calendar, Pairings)
+**Last Updated**: 2025-01-12
+**Phase**: Phase 1-7 Complete ✅ (Authentication, Profile, Events, Score Entry, Calendar, Pairings, Handicaps, Leaderboards, Statistics)
 **Production URL**: Deployed on Vercel
 **Repository**: https://github.com/robertkeele/go4thepin

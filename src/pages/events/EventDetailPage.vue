@@ -3,20 +3,24 @@ import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter, useRoute } from 'vue-router'
 import { supabase } from '@/lib/supabase'
+import { useLeaderboard } from '@/composables/useLeaderboard'
 
 const authStore = useAuthStore()
 const router = useRouter()
 const route = useRoute()
+const { fetchEventLeaderboard } = useLeaderboard()
 
 const event = ref<any>(null)
 const participants = ref<any[]>([])
 const pairings = ref<any[]>([])
+const leaderboardPreview = ref<any[]>([])
 const isLoading = ref(false)
 const isRegistering = ref(false)
 const isGeneratingPairings = ref(false)
 const showPairingDialog = ref(false)
 const errorMessage = ref<string>('')
 const successMessage = ref<string>('')
+const isLoadingLeaderboard = ref(false)
 
 const eventId = route.params.id as string
 
@@ -85,10 +89,28 @@ const loadEvent = async () => {
 
     await loadParticipants()
     await loadPairings()
+
+    // Load leaderboard if event is in progress or completed
+    if (event.value.status === 'in_progress' || event.value.status === 'completed') {
+      await loadLeaderboardPreview()
+    }
   } catch (error: any) {
     errorMessage.value = `Failed to load event: ${error.message}`
   } finally {
     isLoading.value = false
+  }
+}
+
+// Load leaderboard preview (top 5)
+const loadLeaderboardPreview = async () => {
+  isLoadingLeaderboard.value = true
+  try {
+    const fullLeaderboard = await fetchEventLeaderboard(eventId, 'net')
+    leaderboardPreview.value = fullLeaderboard.slice(0, 5)
+  } catch (error: any) {
+    console.error('Failed to load leaderboard preview:', error)
+  } finally {
+    isLoadingLeaderboard.value = false
   }
 }
 
@@ -555,6 +577,77 @@ onMounted(() => {
                     <p class="text-sm text-gray-500">Handicap</p>
                     <p class="font-medium text-gray-900">{{ participant.handicapIndex || '-' }}</p>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Leaderboard Preview -->
+          <div v-if="event.status === 'in_progress' || event.status === 'completed'" class="bg-white shadow rounded-lg overflow-hidden mb-6">
+            <div class="px-6 py-4 border-b border-gray-200">
+              <div class="flex justify-between items-center">
+                <h2 class="text-lg font-medium text-gray-900">
+                  Leaderboard
+                  <span v-if="event.status === 'in_progress'" class="ml-2 inline-flex items-center">
+                    <span class="flex h-2 w-2 mr-2">
+                      <span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-green-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span class="text-sm text-green-700 font-medium">Live</span>
+                  </span>
+                </h2>
+                <button
+                  @click="router.push(`/leaderboards/events/${eventId}`)"
+                  class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-md hover:bg-primary-700 transition-colors"
+                >
+                  View Full Leaderboard
+                </button>
+              </div>
+            </div>
+            <div class="px-6 py-4">
+              <div v-if="isLoadingLeaderboard" class="text-center py-8 text-gray-500">
+                Loading leaderboard...
+              </div>
+              <div v-else-if="leaderboardPreview.length === 0" class="text-center py-8 text-gray-500">
+                No scores posted yet
+              </div>
+              <div v-else>
+                <div class="space-y-3">
+                  <div
+                    v-for="entry in leaderboardPreview"
+                    :key="entry.userId"
+                    class="flex justify-between items-center py-3 border-b border-gray-100 last:border-0"
+                  >
+                    <div class="flex items-center space-x-4">
+                      <div
+                        :class="[
+                          'flex items-center justify-center w-10 h-10 rounded-full font-bold text-sm',
+                          entry.position === 1 ? 'bg-yellow-100 text-yellow-800 border-2 border-yellow-300' :
+                          entry.position === 2 ? 'bg-gray-100 text-gray-800 border-2 border-gray-300' :
+                          entry.position === 3 ? 'bg-orange-100 text-orange-800 border-2 border-orange-300' :
+                          'bg-white text-gray-700 border-2 border-gray-200'
+                        ]"
+                      >
+                        {{ entry.position === 1 ? '🥇' : entry.position === 2 ? '🥈' : entry.position === 3 ? '🥉' : entry.position }}
+                      </div>
+                      <div>
+                        <p class="font-medium text-gray-900">{{ entry.userName }}</p>
+                        <p class="text-sm text-gray-500">Handicap: {{ entry.courseHandicap || '-' }}</p>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <p class="text-2xl font-bold text-primary-600">{{ entry.netScore }}</p>
+                      <p class="text-sm text-gray-500">Gross: {{ entry.grossScore }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-4 text-center">
+                  <button
+                    @click="router.push(`/leaderboards/events/${eventId}`)"
+                    class="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                  >
+                    View Full Leaderboard →
+                  </button>
                 </div>
               </div>
             </div>

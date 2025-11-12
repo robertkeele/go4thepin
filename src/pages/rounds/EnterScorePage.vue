@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/lib/supabase'
@@ -9,6 +9,11 @@ import type { Course, TeeBox, Hole } from '@/types/models'
 const authStore = useAuthStore()
 const router = useRouter()
 const { postRoundForHandicap } = useHandicap()
+
+// Draft state
+const DRAFT_KEY = 'golf-score-entry-draft'
+const showDraftBanner = ref(false)
+const hasSavedDraft = ref(false)
 
 // Form state
 const selectedCourseId = ref<string>('')
@@ -61,6 +66,81 @@ const scoreToPar = computed(() => {
   if (diff > 0) return `+${diff}`
   return diff.toString()
 })
+
+// Validation
+interface ValidationWarning {
+  holeNumber: number
+  message: string
+  type: 'warning' | 'error'
+}
+
+const validationWarnings = computed<ValidationWarning[]>(() => {
+  const warnings: ValidationWarning[] = []
+
+  holeScores.value.forEach(hs => {
+    // Check if score is too low
+    if (hs.strokes < 1) {
+      warnings.push({
+        holeNumber: hs.holeNumber,
+        message: `Hole ${hs.holeNumber}: Score must be at least 1`,
+        type: 'error'
+      })
+    }
+
+    // Check if score is too high
+    if (hs.strokes > 15) {
+      warnings.push({
+        holeNumber: hs.holeNumber,
+        message: `Hole ${hs.holeNumber}: Score cannot exceed 15`,
+        type: 'error'
+      })
+    }
+
+    // Check if putts exceed strokes
+    if (hs.putts !== null && hs.putts > hs.strokes) {
+      warnings.push({
+        holeNumber: hs.holeNumber,
+        message: `Hole ${hs.holeNumber}: Putts (${hs.putts}) cannot exceed total strokes (${hs.strokes})`,
+        type: 'error'
+      })
+    }
+
+    // Warning for unusually high scores (5+ over par)
+    if (hs.strokes >= hs.par + 5) {
+      warnings.push({
+        holeNumber: hs.holeNumber,
+        message: `Hole ${hs.holeNumber}: Score is ${hs.strokes - hs.par} over par`,
+        type: 'warning'
+      })
+    }
+
+    // Warning for too many putts
+    if (hs.putts !== null && hs.putts > 5) {
+      warnings.push({
+        holeNumber: hs.holeNumber,
+        message: `Hole ${hs.holeNumber}: ${hs.putts} putts seems high`,
+        type: 'warning'
+      })
+    }
+  })
+
+  return warnings
+})
+
+const hasErrors = computed(() =>
+  validationWarnings.value.some(w => w.type === 'error')
+)
+
+// Get score color for visual feedback
+const getScoreColor = (strokes: number, par: number): string => {
+  const diff = strokes - par
+  if (diff <= -2) return 'text-yellow-600 font-bold' // Eagle or better
+  if (diff === -1) return 'text-blue-600 font-semibold' // Birdie
+  if (diff === 0) return 'text-green-600' // Par
+  if (diff === 1) return 'text-gray-700' // Bogey
+  if (diff === 2) return 'text-orange-600' // Double bogey
+  return 'text-red-600 font-semibold' // Triple or worse
+}
 
 // Load courses
 const loadCourses = async () => {
@@ -164,6 +244,74 @@ const handleCourseChange = () => {
   loadHoles()
 }
 
+// Draft management
+const saveDraft = () => {
+  if (!selectedCourseId.value) return
+
+  const draft = {
+    selectedCourseId: selectedCourseId.value,
+    selectedTeeBoxId: selectedTeeBoxId.value,
+    playedDate: playedDate.value,
+    postForHandicap: postForHandicap.value,
+    holeScores: holeScores.value,
+    timestamp: new Date().toISOString()
+  }
+
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(draft))
+  hasSavedDraft.value = true
+}
+
+const loadDraft = () => {
+  const savedDraft = localStorage.getItem(DRAFT_KEY)
+  if (!savedDraft) return null
+
+  try {
+    return JSON.parse(savedDraft)
+  } catch {
+    return null
+  }
+}
+
+const restoreDraft = async () => {
+  const draft = loadDraft()
+  if (!draft) return
+
+  selectedCourseId.value = draft.selectedCourseId
+  selectedTeeBoxId.value = draft.selectedTeeBoxId || ''
+  playedDate.value = draft.playedDate || new Date().toISOString().split('T')[0]
+  postForHandicap.value = draft.postForHandicap !== undefined ? draft.postForHandicap : true
+
+  // Load holes for the selected course
+  await loadHoles()
+
+  // Restore hole scores
+  if (draft.holeScores && draft.holeScores.length > 0) {
+    holeScores.value = draft.holeScores
+  }
+
+  showDraftBanner.value = false
+  hasSavedDraft.value = true
+}
+
+const clearDraft = () => {
+  localStorage.removeItem(DRAFT_KEY)
+  showDraftBanner.value = false
+  hasSavedDraft.value = false
+}
+
+const dismissDraftBanner = () => {
+  showDraftBanner.value = false
+}
+
+// Watch for changes and auto-save draft
+watch(
+  [selectedCourseId, selectedTeeBoxId, playedDate, postForHandicap, holeScores],
+  () => {
+    saveDraft()
+  },
+  { deep: true }
+)
+
 // Get selected tee box data
 const selectedTeeBox = computed(() =>
   teeBoxes.value.find(tb => tb.id === selectedTeeBoxId.value)
@@ -178,6 +326,12 @@ const saveRound = async () => {
 
   if (holeScores.value.length !== 18) {
     errorMessage.value = 'Please complete all 18 holes'
+    return
+  }
+
+  // Check for validation errors
+  if (hasErrors.value) {
+    errorMessage.value = 'Please fix the errors before saving'
     return
   }
 
@@ -245,6 +399,9 @@ const saveRound = async () => {
       ? 'Round saved and posted for handicap!'
       : 'Round saved successfully!'
 
+    // Clear the draft after successful save
+    clearDraft()
+
     // Redirect to rounds history after a short delay
     setTimeout(() => {
       router.push('/rounds/history')
@@ -261,6 +418,12 @@ const saveRound = async () => {
 onMounted(() => {
   loadCourses()
   loadTeeBoxes()
+
+  // Check for saved draft
+  const draft = loadDraft()
+  if (draft) {
+    showDraftBanner.value = true
+  }
 })
 </script>
 
@@ -286,6 +449,46 @@ onMounted(() => {
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
       <div class="px-4 py-6 sm:px-0">
+
+        <!-- Draft Restore Banner -->
+        <div v-if="showDraftBanner" class="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <h3 class="text-sm font-medium text-blue-800">Saved Draft Found</h3>
+              <p class="mt-1 text-sm text-blue-700">
+                You have an unfinished score entry. Would you like to restore it?
+              </p>
+              <div class="mt-3 flex space-x-3">
+                <button
+                  @click="restoreDraft"
+                  class="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors"
+                >
+                  Restore Draft
+                </button>
+                <button
+                  @click="clearDraft"
+                  class="px-3 py-1.5 bg-white text-blue-700 text-sm font-medium rounded border border-blue-300 hover:bg-blue-50 transition-colors"
+                >
+                  Start Fresh
+                </button>
+                <button
+                  @click="dismissDraftBanner"
+                  class="px-3 py-1.5 text-blue-700 text-sm font-medium hover:text-blue-800 transition-colors"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+            <button
+              @click="dismissDraftBanner"
+              class="ml-4 text-blue-500 hover:text-blue-700"
+            >
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
 
         <!-- Error Message -->
         <div v-if="errorMessage" class="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
@@ -385,6 +588,48 @@ onMounted(() => {
             </div>
           </div>
 
+          <!-- Validation Messages -->
+          <div v-if="validationWarnings.length > 0" class="mb-4">
+            <div v-for="warning in validationWarnings" :key="`${warning.holeNumber}-${warning.message}`"
+              :class="[
+                'mb-2 p-3 rounded-lg text-sm',
+                warning.type === 'error' ? 'bg-red-50 border border-red-200 text-red-700' : 'bg-yellow-50 border border-yellow-200 text-yellow-800'
+              ]"
+            >
+              <span v-if="warning.type === 'error'" class="font-medium">Error: </span>
+              <span v-else class="font-medium">Warning: </span>
+              {{ warning.message }}
+            </div>
+          </div>
+
+          <!-- Score Legend -->
+          <div class="mb-4 flex flex-wrap gap-4 text-xs">
+            <div class="flex items-center">
+              <span class="text-yellow-600 font-bold mr-1">■</span>
+              <span class="text-gray-600">Eagle or better</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-blue-600 font-semibold mr-1">■</span>
+              <span class="text-gray-600">Birdie</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-green-600 mr-1">■</span>
+              <span class="text-gray-600">Par</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-gray-700 mr-1">■</span>
+              <span class="text-gray-600">Bogey</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-orange-600 mr-1">■</span>
+              <span class="text-gray-600">Double</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-red-600 font-semibold mr-1">■</span>
+              <span class="text-gray-600">Triple+</span>
+            </div>
+          </div>
+
           <!-- Score Grid -->
           <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
@@ -412,7 +657,11 @@ onMounted(() => {
                       type="number"
                       min="1"
                       max="15"
-                      class="w-16 px-2 py-1 border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      :class="[
+                        'w-16 px-2 py-1 border rounded text-center focus:outline-none focus:ring-2 focus:ring-primary-500',
+                        getScoreColor(holeScore.strokes, holeScore.par),
+                        holeScore.strokes < 1 || holeScore.strokes > 15 ? 'border-red-500' : 'border-gray-300'
+                      ]"
                     />
                   </td>
                   <td class="px-3 py-3 whitespace-nowrap">
@@ -451,14 +700,28 @@ onMounted(() => {
             </table>
           </div>
 
-          <!-- Save Button -->
-          <div class="mt-6 flex justify-end">
+          <!-- Save and Clear Draft Buttons -->
+          <div class="mt-6 flex justify-between items-center">
+            <button
+              v-if="hasSavedDraft"
+              @click="clearDraft"
+              class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              Clear Draft
+            </button>
+            <div v-else></div>
             <button
               @click="saveRound"
-              :disabled="isSaving || !selectedCourseId || !selectedTeeBoxId"
-              class="px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              :disabled="isSaving || !selectedCourseId || !selectedTeeBoxId || hasErrors"
+              :class="[
+                'px-6 py-3 font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors',
+                hasErrors
+                  ? 'bg-gray-400 text-white cursor-not-allowed'
+                  : 'bg-primary-600 text-white hover:bg-primary-700',
+                (isSaving || !selectedCourseId || !selectedTeeBoxId) ? 'opacity-50 cursor-not-allowed' : ''
+              ]"
             >
-              {{ isSaving ? 'Saving...' : 'Save Round' }}
+              {{ isSaving ? 'Saving...' : hasErrors ? 'Fix Errors to Save' : 'Save Round' }}
             </button>
           </div>
         </div>
