@@ -137,17 +137,17 @@ export const useAuth = () => {
 
       if (data) {
         user.value = {
-          id: data.id,
-          email: data.email,
-          firstName: data.first_name || '',
-          lastName: data.last_name || '',
-          phone: data.phone || undefined,
-          ghinNumber: data.ghin_number || undefined,
-          role: data.role,
-          currentHandicapIndex: data.current_handicap_index || undefined,
-          avatarUrl: data.avatar_url || undefined,
-          createdAt: data.created_at,
-          updatedAt: data.updated_at,
+          id: data.id as string,
+          email: data.email as string,
+          firstName: (data.first_name as string) || '',
+          lastName: (data.last_name as string) || '',
+          phone: (data.phone as string) || undefined,
+          ghinNumber: (data.ghin_number as string) || undefined,
+          role: data.role as 'admin' | 'member' | 'viewer',
+          currentHandicapIndex: (data.current_handicap_index as number) || undefined,
+          avatarUrl: (data.avatar_url as string) || undefined,
+          createdAt: data.created_at as string,
+          updatedAt: data.updated_at as string,
         }
       }
     } catch (err) {
