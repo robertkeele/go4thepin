@@ -137,8 +137,15 @@ onMounted(() => {
             </button>
             <h1 class="text-2xl font-bold text-gray-900">Events</h1>
           </div>
-          <div v-if="authStore.isAdmin" class="flex items-center">
+          <div class="flex items-center space-x-3">
             <button
+              @click="router.push('/events-calendar')"
+              class="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50 transition-colors"
+            >
+              📆 Calendar View
+            </button>
+            <button
+              v-if="authStore.isAdmin"
               @click="router.push('/events/create')"
               class="px-4 py-2 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
             >

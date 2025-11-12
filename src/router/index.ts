@@ -63,6 +63,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/events-calendar',
+      name: 'events-calendar',
+      component: () => import('@/pages/events/EventsCalendarPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/courses',
       name: 'courses',
       component: () => import('@/pages/courses/CoursesListPage.vue'),

@@ -144,6 +144,14 @@ const handleSignOut = async () => {
                   <p class="mt-1 text-xs text-gray-600">Browse and register</p>
                 </button>
                 <button
+                  @click="router.push('/events-calendar')"
+                  class="bg-primary-50 hover:bg-primary-100 rounded-lg p-4 text-center transition-colors cursor-pointer"
+                >
+                  <div class="text-3xl mb-2">📆</div>
+                  <h4 class="text-sm font-medium text-gray-900">Calendar</h4>
+                  <p class="mt-1 text-xs text-gray-600">View event calendar</p>
+                </button>
+                <button
                   @click="router.push('/courses')"
                   class="bg-primary-50 hover:bg-primary-100 rounded-lg p-4 text-center transition-colors cursor-pointer"
                 >
