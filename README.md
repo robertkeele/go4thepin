@@ -14,14 +14,43 @@ A modern web application for managing golf leagues, tracking scores, calculating
 
 ## Features
 
-- User authentication and profile management
-- Course management with hole-by-hole details
-- Event scheduling and registration
-- Score entry with multiple formats (Stroke play, Match play, Stableford)
-- USGA handicap calculation
-- Real-time leaderboards
-- Team competitions
-- Statistics and performance tracking
+### Core Features
+- **User Authentication** - Secure login/registration with role-based access (admin/member)
+- **Profile Management** - Edit personal info, view handicap history and trends
+- **Course Management** - Full CRUD operations with hole-by-hole details and tee box configurations
+- **Event Management** - Create, schedule, and manage league events with registration
+- **Event Calendar** - Monthly calendar view with color-coded events and registration status
+- **Pairing Generation** - Automated tee time grouping with configurable group sizes
+
+### Score Tracking
+- **Score Entry** - Hole-by-hole score input with real-time calculations
+- **Detailed Statistics** - Track strokes, putts, fairways hit, and greens in regulation
+- **Round History** - View past rounds with expandable scorecards (front 9/back 9)
+- **Color-Coded Scoring** - Visual feedback for eagles, birdies, pars, bogeys, etc.
+
+### Handicap System (Phase 6 ✅)
+- **USGA Handicap Calculation** - Compliant with World Handicap System (WHS)
+- **Automatic Updates** - Handicap index recalculated when rounds are posted
+- **Handicap History** - Track handicap trends over time with visual charts
+- **Post for Handicap** - One-click posting of rounds for handicap calculation
+- **Course Handicap** - Automatic calculation based on tee box and handicap index
+- **ESC Implementation** - Equitable Stroke Control for adjusted gross scores
+- **Handicap Widget** - Visual display on dashboard and profile with trend indicators
+
+### Leaderboards & Competition (Phase 7 ✅)
+- **Real-time Leaderboards** - Live updates during events using Supabase Realtime
+- **Multiple Scoring Options** - Toggle between gross and net scores
+- **Position Tracking** - Proper handling of ties with position badges (🥇🥈🥉)
+- **Event Leaderboards** - Individual event standings with score-to-par display
+- **Season Standings** - Aggregate performance across all rounds
+- **Live Connection Indicator** - See when leaderboard is connected and updating
+
+### Statistics & Analytics
+- **Personal Statistics** - Comprehensive performance tracking dashboard
+- **Scoring Distribution** - Visual breakdown of eagles, birdies, pars, bogeys, etc.
+- **Recent Form** - Track your last 5 rounds with trends
+- **Performance Metrics** - Best/worst rounds, average scores, and improvement trends
+- **Visual Charts** - Progress bars and graphs for easy analysis
 
 ## Project Structure
 
@@ -31,11 +60,18 @@ src/
 ├── components/          # Reusable Vue components
 │   ├── common/          # Generic UI components
 │   ├── layout/          # Layout components
+│   ├── handicap/        # Handicap widgets
+│   │   └── HandicapWidget.vue
 │   ├── score/           # Score entry components
 │   ├── leaderboard/     # Leaderboard components
 │   ├── events/          # Event components
 │   └── teams/           # Team components
 ├── composables/         # Composition API composables
+│   ├── useAuth.ts       # Authentication logic
+│   ├── useHandicap.ts   # Handicap calculations
+│   ├── useLeaderboard.ts # Leaderboard data
+│   ├── useRealtimeLeaderboard.ts # Real-time updates
+│   └── useStats.ts      # Statistics
 ├── layouts/             # Page layouts
 ├── lib/                 # External library configs
 │   └── supabase.ts      # Supabase client
@@ -44,17 +80,22 @@ src/
 │   ├── dashboard/       # Dashboard
 │   ├── events/          # Event pages
 │   ├── rounds/          # Score entry & history
-│   ├── leaderboards/    # Leaderboards
+│   ├── leaderboards/    # Leaderboard pages
+│   │   └── EventLeaderboardPage.vue
+│   ├── stats/           # Statistics pages
+│   │   └── StatsPage.vue
 │   ├── teams/           # Team management
 │   ├── courses/         # Course management
+│   ├── profile/         # User profile
 │   └── admin/           # Admin pages
 ├── router/              # Vue Router configuration
 ├── stores/              # Pinia stores
+│   └── auth.ts          # Auth state management
 ├── types/               # TypeScript type definitions
 │   ├── database.types.ts # Supabase database types
 │   └── models.ts        # Domain models
 ├── utils/               # Utility functions
-│   ├── handicap.ts      # Handicap calculations
+│   ├── handicap.ts      # USGA handicap calculations
 │   └── scoring.ts       # Scoring logic
 └── main.ts              # Application entry point
 ```
