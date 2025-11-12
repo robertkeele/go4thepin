@@ -3,15 +3,18 @@ import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/lib/supabase'
+import { useHandicap } from '@/composables/useHandicap'
 import type { Course, TeeBox, Hole } from '@/types/models'
 
 const authStore = useAuthStore()
 const router = useRouter()
+const { postRoundForHandicap } = useHandicap()
 
 // Form state
 const selectedCourseId = ref<string>('')
 const selectedTeeBoxId = ref<string>('')
 const playedDate = ref<string>(new Date().toISOString().split('T')[0])
+const postForHandicap = ref<boolean>(true)
 const isLoading = ref(false)
 const isSaving = ref(false)
 const errorMessage = ref<string>('')
@@ -161,6 +164,11 @@ const handleCourseChange = () => {
   loadHoles()
 }
 
+// Get selected tee box data
+const selectedTeeBox = computed(() =>
+  teeBoxes.value.find(tb => tb.id === selectedTeeBoxId.value)
+)
+
 // Save round
 const saveRound = async () => {
   if (!selectedCourseId.value || !selectedTeeBoxId.value || !playedDate.value) {
@@ -217,7 +225,25 @@ const saveRound = async () => {
 
     if (scoresError) throw scoresError
 
-    successMessage.value = 'Round saved successfully!'
+    // Post for handicap if checked
+    if (postForHandicap.value && selectedTeeBox.value) {
+      const holeStrokesArray = holeScores.value.map(hs => hs.strokes)
+      const holeParsArray = holeScores.value.map(hs => hs.par)
+
+      await postRoundForHandicap(
+        (roundData as any).id,
+        authStore.user.id,
+        holeStrokesArray,
+        holeParsArray,
+        selectedTeeBox.value.courseRating,
+        selectedTeeBox.value.slopeRating,
+        totalScore.value
+      )
+    }
+
+    successMessage.value = postForHandicap.value
+      ? 'Round saved and posted for handicap!'
+      : 'Round saved successfully!'
 
     // Redirect to rounds history after a short delay
     setTimeout(() => {
@@ -325,6 +351,23 @@ onMounted(() => {
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
+          </div>
+
+          <!-- Post for Handicap -->
+          <div class="mt-4">
+            <label class="flex items-center">
+              <input
+                v-model="postForHandicap"
+                type="checkbox"
+                class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              />
+              <span class="ml-2 text-sm text-gray-700">
+                Post this round for handicap calculation
+              </span>
+            </label>
+            <p class="mt-1 text-xs text-gray-500">
+              Your round will be used to calculate your USGA Handicap Index
+            </p>
           </div>
         </div>
 

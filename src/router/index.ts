@@ -92,6 +92,18 @@ const router = createRouter({
       component: () => import('@/pages/admin/UsersManagementPage.vue'),
       meta: { requiresAuth: true, requiresAdmin: true },
     },
+    {
+      path: '/stats',
+      name: 'stats',
+      component: () => import('@/pages/stats/StatsPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/leaderboards/events/:id',
+      name: 'event-leaderboard',
+      component: () => import('@/pages/leaderboards/EventLeaderboardPage.vue'),
+      meta: { requiresAuth: true },
+    },
   ],
 })
 

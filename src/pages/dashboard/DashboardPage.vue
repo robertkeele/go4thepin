@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import HandicapWidget from '@/components/handicap/HandicapWidget.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -115,6 +116,14 @@ const handleSignOut = async () => {
               </dl>
             </div>
 
+            <!-- Handicap Widget -->
+            <div v-if="authStore.user" class="mt-8">
+              <HandicapWidget
+                :user-id="authStore.user.id"
+                :current-handicap-index="authStore.user.currentHandicapIndex"
+              />
+            </div>
+
             <!-- Quick Actions -->
             <div class="mt-8">
               <h3 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
@@ -166,6 +175,14 @@ const handleSignOut = async () => {
                   <div class="text-3xl mb-2">👤</div>
                   <h4 class="text-sm font-medium text-gray-900">My Profile</h4>
                   <p class="mt-1 text-xs text-gray-600">Edit your info</p>
+                </button>
+                <button
+                  @click="router.push('/stats')"
+                  class="bg-primary-50 hover:bg-primary-100 rounded-lg p-4 text-center transition-colors cursor-pointer"
+                >
+                  <div class="text-3xl mb-2">📈</div>
+                  <h4 class="text-sm font-medium text-gray-900">Statistics</h4>
+                  <p class="mt-1 text-xs text-gray-600">View your stats</p>
                 </button>
                 <button
                   v-if="authStore.isAdmin"

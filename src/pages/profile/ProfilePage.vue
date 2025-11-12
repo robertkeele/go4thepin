@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/lib/supabase'
+import HandicapWidget from '@/components/handicap/HandicapWidget.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -283,6 +284,14 @@ onMounted(() => {
               </div>
             </form>
           </div>
+        </div>
+
+        <!-- Handicap Widget -->
+        <div v-if="authStore.user" class="mt-6">
+          <HandicapWidget
+            :user-id="authStore.user.id"
+            :current-handicap-index="authStore.user.currentHandicapIndex"
+          />
         </div>
 
         <!-- Account Info -->
