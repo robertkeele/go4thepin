@@ -89,15 +89,24 @@ const handleSignOut = async () => {
             <div class="mt-8">
               <h3 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div class="bg-primary-50 rounded-lg p-4 text-center">
+                <button
+                  @click="router.push('/rounds/enter')"
+                  class="bg-primary-50 hover:bg-primary-100 rounded-lg p-4 text-center transition-colors cursor-pointer"
+                >
+                  <div class="text-3xl mb-2">⛳</div>
                   <h4 class="text-sm font-medium text-gray-900">Enter Scores</h4>
-                  <p class="mt-1 text-xs text-gray-500">Coming soon</p>
-                </div>
-                <div class="bg-primary-50 rounded-lg p-4 text-center">
-                  <h4 class="text-sm font-medium text-gray-900">View Events</h4>
-                  <p class="mt-1 text-xs text-gray-500">Coming soon</p>
-                </div>
-                <div class="bg-primary-50 rounded-lg p-4 text-center">
+                  <p class="mt-1 text-xs text-gray-600">Record a new round</p>
+                </button>
+                <button
+                  @click="router.push('/rounds/history')"
+                  class="bg-primary-50 hover:bg-primary-100 rounded-lg p-4 text-center transition-colors cursor-pointer"
+                >
+                  <div class="text-3xl mb-2">📊</div>
+                  <h4 class="text-sm font-medium text-gray-900">My Rounds</h4>
+                  <p class="mt-1 text-xs text-gray-600">View your history</p>
+                </button>
+                <div class="bg-gray-50 rounded-lg p-4 text-center opacity-50">
+                  <div class="text-3xl mb-2">🏆</div>
                   <h4 class="text-sm font-medium text-gray-900">Leaderboard</h4>
                   <p class="mt-1 text-xs text-gray-500">Coming soon</p>
                 </div>

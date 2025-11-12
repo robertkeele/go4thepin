@@ -26,6 +26,18 @@ const router = createRouter({
       component: () => import('@/pages/dashboard/DashboardPage.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/rounds/enter',
+      name: 'enter-score',
+      component: () => import('@/pages/rounds/EnterScorePage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/rounds/history',
+      name: 'rounds-history',
+      component: () => import('@/pages/rounds/RoundsHistoryPage.vue'),
+      meta: { requiresAuth: true },
+    },
     // Add more protected routes here
   ],
 })
