@@ -4,7 +4,7 @@
 
 A modern web application for managing golf leagues, tracking scores, calculating handicaps, and running competitions.
 
-**Status**: Phase 1 Complete (Authentication System Implemented)
+**Status**: Phase 1-4 Complete (Authentication, Profile, Events, Score Entry Implemented)
 
 ## Technology Stack
 
@@ -160,8 +160,9 @@ golf-league-app/
 │   ├── pages/           # Page components
 │   │   ├── auth/        # Login, Register
 │   │   ├── dashboard/   # Dashboard
-│   │   ├── events/
-│   │   ├── rounds/
+│   │   ├── profile/     # ProfilePage (edit user info)
+│   │   ├── events/      # EventsListPage, EventDetailPage, CreateEventPage
+│   │   ├── rounds/      # EnterScorePage, RoundsHistoryPage
 │   │   ├── leaderboards/
 │   │   ├── teams/
 │   │   ├── courses/
@@ -229,25 +230,42 @@ SET role = 'admin'
 WHERE email = 'user@example.com';
 ```
 
-## Next Implementation Phases
+## Implementation Phases
 
-### Phase 2: User & Course Management (Pending)
-- [ ] User profile page
-- [ ] Admin user management
-- [ ] Course listing and detail pages
-- [ ] Course management (admin)
+### Phase 1: Authentication & Deployment ✅ Complete
+- [x] Vue 3 project setup with TypeScript
+- [x] Authentication system (login/register)
+- [x] Router with auth guards
+- [x] Dashboard
+- [x] Vercel deployment
 
-### Phase 3: Event Management (Pending)
-- [ ] Event creation (admin)
-- [ ] Event listing and calendar
-- [ ] Event registration/RSVP
-- [ ] Pairing generation
+### Phase 2: User Profile Management ✅ Complete
+- [x] User profile page with edit functionality
+- [x] Profile fields: name, phone, GHIN, handicap
+- [x] View member since date
+- [x] Update profile information
+- [ ] Admin user management (pending)
+- [ ] Course listing and detail pages (pending)
+- [ ] Course management (admin) (pending)
 
-### Phase 4: Score Entry (Pending)
-- [ ] Score entry form (hole-by-hole)
-- [ ] Round history
-- [ ] Score validation
-- [ ] Score differential calculation
+### Phase 3: Event Management ✅ Complete
+- [x] Event creation (admin only)
+- [x] Event listing with filters (upcoming/all/past)
+- [x] Event detail page
+- [x] Event registration/unregistration
+- [x] Participant list with handicaps
+- [x] Registration count and limits
+- [ ] Pairing generation (pending)
+- [ ] Event calendar view (pending)
+
+### Phase 4: Score Entry ✅ Complete
+- [x] Score entry form (hole-by-hole)
+- [x] Round history with expandable scorecards
+- [x] Track strokes, putts, fairways, GIR
+- [x] Color-coded scorecard display
+- [x] Real-time score totals
+- [ ] Score validation (pending)
+- [ ] Score differential calculation (pending)
 
 ### Phase 5: Handicap System (Pending)
 - [ ] USGA handicap calculation
@@ -350,6 +368,9 @@ Due to Node 18 compatibility requirements, we use Supabase v2.45.4 which has lim
 - Adding explicit type annotations with `ProfileRow` type for Supabase queries
 - Using `.single<ProfileRow>()` for type-safe query results
 - Adding `@ts-ignore` comments for `.update()` methods (Supabase v2.45.4 limitation)
+- Casting `supabase.from()` to `any` for insert operations
+- Adding null checks for query results before mapping
+- Using `as any` type assertions for complex query responses
 
 ### Deployment Process
 1. Push to GitHub main branch
@@ -374,34 +395,96 @@ After deploying, update Supabase Auth settings:
 
 ## Current Status Summary
 
-✅ **Completed**:
+✅ **Completed (Phase 1-4)**:
+
+**Foundation:**
 - Vue 3 project setup with TypeScript
 - Tailwind CSS configuration with golf theme
 - Supabase integration
 - Database schema (all 12 tables)
 - RLS policies for security
-- Authentication system (login/register/dashboard)
-- Router with auth guards
-- Pinia auth store
-- Sample seed data (3 golf courses)
 - GitHub repository setup
 - Vercel deployment (production ready)
 - TypeScript build configuration for Node 18
 - ESLint 8.x configuration
 
-⏳ **In Progress**:
-- Running database migrations in production
-- Testing authentication flow in production
+**Authentication System:**
+- Login/register pages
+- Protected routes with auth guards
+- Pinia auth store
+- Session persistence
+- Dashboard with user profile display
 
-📋 **Next Up (Phase 2)**:
-- User profile page and editing
+**Profile Management:**
+- User profile page (`/profile`)
+- Edit personal information (name, phone, GHIN, handicap)
+- View member since date
+- Profile link in navigation
+
+**Events Management:**
+- Events listing page (`/events`) with filters
+- Event detail page (`/events/:id`)
+- Event registration/unregistration
+- Create event page (`/events/create`) - admin only
+- Participant list with handicaps
+- Registration counts and limits
+- Event status tracking
+
+**Score Entry & History:**
+- Score entry page (`/rounds/enter`)
+- Hole-by-hole score input (18 holes)
+- Track strokes, putts, fairways hit, GIR
+- Real-time score calculation
+- Rounds history page (`/rounds/history`)
+- Expandable scorecards (front 9, back 9)
+- Color-coded scores (eagle/birdie/par/bogey)
+- Stats summary per round
+
+**Sample Data:**
+- 3 seeded golf courses with full hole data
+- Multiple tee boxes per course
+- Ready for immediate testing
+
+📋 **Next Up (Phase 5-7)**:
+- USGA handicap calculation system
+- Event leaderboards with real-time updates
+- Team competitions and management
+- Course listing and management (admin)
 - Admin user management dashboard
-- Course listing and detail pages
-- Course management (admin only)
+- Event pairing generation
+
+## Quick Start Guide
+
+### For Members:
+1. Register at `/register` with email/password
+2. Fill in your profile at `/profile` (name, GHIN, handicap)
+3. Browse events at `/events` and register for upcoming tournaments
+4. Enter your scores at `/rounds/enter` after playing
+5. View your round history at `/rounds/history`
+
+### For Admins:
+1. Update your role to 'admin' via Supabase SQL:
+   ```sql
+   UPDATE profiles SET role = 'admin' WHERE email = 'your-email@example.com';
+   ```
+2. Create events at `/events/create`
+3. Manage event details and view registrations
+4. All member features plus admin capabilities
+
+### Key Routes:
+- `/login` - Sign in
+- `/register` - Create account
+- `/dashboard` - Main dashboard with quick actions
+- `/profile` - View/edit your profile
+- `/events` - Browse all events
+- `/events/:id` - Event details and registration
+- `/events/create` - Create new event (admin)
+- `/rounds/enter` - Enter a new round
+- `/rounds/history` - View your rounds
 
 ---
 
-**Last Updated**: 2025-11-11
-**Phase**: Phase 1 - Authentication & Deployment ✅ Complete
+**Last Updated**: 2025-01-11
+**Phase**: Phase 1-4 Complete ✅ (Authentication, Profile, Events, Score Entry)
 **Production URL**: Deployed on Vercel
 **Repository**: https://github.com/robertkeele/go4thepin
