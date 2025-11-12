@@ -198,17 +198,6 @@ const handleSignOut = async () => {
             </div>
           </div>
         </div>
-
-        <!-- Next Steps -->
-        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 class="text-sm font-medium text-blue-900 mb-2">🎯 Next Steps</h3>
-          <ul class="text-sm text-blue-700 space-y-1 list-disc list-inside">
-            <li>Run the database migrations in your Supabase dashboard</li>
-            <li>Explore your profile and settings</li>
-            <li>Start tracking your golf rounds</li>
-            <li>Invite other members to join the league</li>
-          </ul>
-        </div>
       </div>
     </main>
   </div>
