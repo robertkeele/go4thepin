@@ -32,8 +32,9 @@ const loadRounds = async () => {
       .order('played_date', { ascending: false })
 
     if (error) throw error
+    if (!data) return
 
-    rounds.value = data.map(round => ({
+    rounds.value = data.map((round: any) => ({
       id: round.id,
       userId: round.user_id,
       eventId: round.event_id,
@@ -80,8 +81,9 @@ const loadRoundScores = async (roundId: string) => {
       .order('hole.hole_number', { ascending: true })
 
     if (error) throw error
+    if (!data) return
 
-    holeScores.value = data.map(score => ({
+    holeScores.value = data.map((score: any) => ({
       holeNumber: score.hole.hole_number,
       par: score.hole.par,
       strokes: score.strokes,

@@ -71,8 +71,9 @@ const loadCourses = async () => {
       .order('name')
 
     if (error) throw error
+    if (!data) return
 
-    courses.value = data.map(course => ({
+    courses.value = data.map((course: any) => ({
       id: course.id,
       name: course.name,
       city: course.city,
@@ -96,8 +97,9 @@ const loadTeeBoxes = async () => {
       .select('*')
 
     if (error) throw error
+    if (!data) return
 
-    teeBoxes.value = data.map(tb => ({
+    teeBoxes.value = data.map((tb: any) => ({
       id: tb.id,
       courseId: tb.course_id,
       name: tb.name,
@@ -124,8 +126,9 @@ const loadHoles = async () => {
       .order('hole_number')
 
     if (error) throw error
+    if (!data) return
 
-    holes.value = data.map(hole => ({
+    holes.value = data.map((hole: any) => ({
       id: hole.id,
       courseId: hole.course_id,
       holeNumber: hole.hole_number,
