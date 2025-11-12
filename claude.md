@@ -293,10 +293,12 @@ colors: {
 }
 ```
 
-### Git
-- Repository initialized
+### Git & Deployment
+- Repository: https://github.com/robertkeele/go4thepin
 - Initial commit made
 - `.env` is gitignored (contains secrets)
+- Deployed to Vercel
+- Automatic deployments on push to main branch
 
 ## Useful Queries
 
@@ -326,6 +328,40 @@ ORDER BY r.played_date DESC
 LIMIT 10;
 ```
 
+## Deployment
+
+### Vercel Configuration
+- **Platform**: Vercel
+- **Repository**: https://github.com/robertkeele/go4thepin
+- **Root Directory**: `golf-league-app`
+- **Framework**: Vite
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+- **Node Version**: 18.x
+
+### Environment Variables (Set in Vercel)
+```
+VITE_SUPABASE_URL=https://vrwylvcyoqszrkbbxgaf.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+### TypeScript Build Fixes
+Due to Node 18 compatibility requirements, we use Supabase v2.45.4 which has limited TypeScript inference. Fixed by:
+- Adding explicit type annotations with `ProfileRow` type for Supabase queries
+- Using `.single<ProfileRow>()` for type-safe query results
+- Adding `@ts-ignore` comments for `.update()` methods (Supabase v2.45.4 limitation)
+
+### Deployment Process
+1. Push to GitHub main branch
+2. Vercel auto-deploys
+3. Build runs `npm run build` (type-check + vite build)
+4. Deployment completes in ~1-2 minutes
+
+### Post-Deployment Setup
+After deploying, update Supabase Auth settings:
+1. Go to Supabase Dashboard → Authentication → URL Configuration
+2. Add Vercel URL to Site URL and Redirect URLs
+
 ## Documentation Files
 
 - **README.md** - Project overview and setup
@@ -339,26 +375,33 @@ LIMIT 10;
 ## Current Status Summary
 
 ✅ **Completed**:
-- Vue 3 project setup
-- Tailwind CSS configuration
+- Vue 3 project setup with TypeScript
+- Tailwind CSS configuration with golf theme
 - Supabase integration
-- Database schema (ready to run)
-- RLS policies
+- Database schema (all 12 tables)
+- RLS policies for security
 - Authentication system (login/register/dashboard)
 - Router with auth guards
 - Pinia auth store
-- Sample seed data
+- Sample seed data (3 golf courses)
+- GitHub repository setup
+- Vercel deployment (production ready)
+- TypeScript build configuration for Node 18
+- ESLint 8.x configuration
 
 ⏳ **In Progress**:
-- Testing authentication flow
-- Running database migrations
+- Running database migrations in production
+- Testing authentication flow in production
 
-📋 **Next Up**:
-- User profile management
-- Course listing and management
-- Event creation and scheduling
+📋 **Next Up (Phase 2)**:
+- User profile page and editing
+- Admin user management dashboard
+- Course listing and detail pages
+- Course management (admin only)
 
 ---
 
-**Last Updated**: 2025-11-12
-**Phase**: Phase 1 - Authentication ✅ Complete
+**Last Updated**: 2025-11-11
+**Phase**: Phase 1 - Authentication & Deployment ✅ Complete
+**Production URL**: Deployed on Vercel
+**Repository**: https://github.com/robertkeele/go4thepin
