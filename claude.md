@@ -525,6 +525,38 @@ After deploying, update Supabase Auth settings:
 - Average score calculations
 - Performance trends over time
 
+**Quick Wins Features (Phase 7+ ✅):**
+- **Event Detail Leaderboard Preview:**
+  - Top 5 leaderboard widget on event detail pages
+  - Live indicator with animated pulse for in-progress events
+  - Medal badges (🥇🥈🥉) for top 3 positions
+  - Shows both net and gross scores
+  - "View Full Leaderboard" button for quick navigation
+  - Only displays for in_progress or completed events
+- **Score Entry Draft Auto-Save:**
+  - Auto-saves to localStorage as users enter scores
+  - Tracks course, tee box, date, handicap option, and all hole scores
+  - Draft restore banner on page load if unfinished round found
+  - Three options: Restore Draft, Start Fresh, or Dismiss
+  - "Clear Draft" button available during score entry
+  - Automatic cleanup after successful save
+  - Prevents data loss from navigation or browser close
+- **Score Entry Validation & Visual Feedback:**
+  - Real-time validation with error/warning system
+  - Errors (block save): Score < 1 or > 15, putts > strokes
+  - Warnings (allowed): Score 5+ over par, putts > 5
+  - Color-coded score inputs for instant feedback:
+    * Yellow (bold): Eagle or better (-2 or less)
+    * Blue (semibold): Birdie (-1)
+    * Green: Par (0)
+    * Gray: Bogey (+1)
+    * Orange: Double bogey (+2)
+    * Red (semibold): Triple bogey or worse (+3+)
+  - Red borders on invalid inputs
+  - Visual legend showing color meanings
+  - Save button disabled when errors present
+  - Dynamic button text: "Fix Errors to Save" when errors exist
+
 **Sample Data:**
 - 3 seeded golf courses with full hole data
 - Multiple tee boxes per course
@@ -583,6 +615,6 @@ After deploying, update Supabase Auth settings:
 ---
 
 **Last Updated**: 2025-01-12
-**Phase**: Phase 1-7 Complete ✅ (Authentication, Profile, Events, Score Entry, Calendar, Pairings, Handicaps, Leaderboards, Statistics)
+**Phase**: Phase 1-7 Complete + Quick Wins ✅ (Authentication, Profile, Events, Score Entry, Calendar, Pairings, Handicaps, Leaderboards, Statistics, Draft Saving, Validation)
 **Production URL**: Deployed on Vercel
 **Repository**: https://github.com/robertkeele/go4thepin

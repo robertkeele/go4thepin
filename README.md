@@ -21,9 +21,15 @@ A modern web application for managing golf leagues, tracking scores, calculating
 - **Event Management** - Create, schedule, and manage league events with registration
 - **Event Calendar** - Monthly calendar view with color-coded events and registration status
 - **Pairing Generation** - Automated tee time grouping with configurable group sizes
+- **Leaderboard Preview** - Top 5 leaderboard widget on event detail pages with live indicator
 
 ### Score Tracking
 - **Score Entry** - Hole-by-hole score input with real-time calculations
+- **Draft Auto-Save** - Automatically saves score entry progress to localStorage to prevent data loss
+- **Draft Recovery** - Restore unfinished rounds with banner prompt on page load
+- **Score Validation** - Real-time validation with error/warning messages for invalid entries
+- **Visual Feedback** - Color-coded score inputs (eagle=yellow, birdie=blue, par=green, etc.)
+- **Smart Validation** - Prevents saving with errors (score out of range, putts > strokes)
 - **Detailed Statistics** - Track strokes, putts, fairways hit, and greens in regulation
 - **Round History** - View past rounds with expandable scorecards (front 9/back 9)
 - **Color-Coded Scoring** - Visual feedback for eagles, birdies, pars, bogeys, etc.
@@ -39,11 +45,13 @@ A modern web application for managing golf leagues, tracking scores, calculating
 
 ### Leaderboards & Competition (Phase 7 ✅)
 - **Real-time Leaderboards** - Live updates during events using Supabase Realtime
+- **Leaderboard Preview Widget** - Top 5 players displayed on event detail pages
 - **Multiple Scoring Options** - Toggle between gross and net scores
 - **Position Tracking** - Proper handling of ties with position badges (🥇🥈🥉)
 - **Event Leaderboards** - Individual event standings with score-to-par display
 - **Season Standings** - Aggregate performance across all rounds
-- **Live Connection Indicator** - See when leaderboard is connected and updating
+- **Live Connection Indicator** - Animated pulse showing real-time connection status
+- **Quick Access** - Direct links from event pages to full leaderboards
 
 ### Statistics & Analytics
 - **Personal Statistics** - Comprehensive performance tracking dashboard
@@ -197,6 +205,19 @@ Supabase handles hosting automatically. Ensure:
 - All migrations are applied
 - RLS policies are enabled
 - Authentication settings are configured
+
+## Recent Updates (Quick Wins)
+
+### Score Entry Improvements
+- **Auto-Save Drafts**: Score entries automatically saved to browser storage
+- **Draft Recovery**: Restore unfinished rounds when returning to the page
+- **Real-time Validation**: Instant feedback for invalid scores with color-coded errors
+- **Visual Score Feedback**: Color-coded inputs show score quality (eagle, birdie, par, etc.)
+
+### Event Experience Enhancements
+- **Leaderboard Previews**: Top 5 standings embedded on event detail pages
+- **Live Indicators**: Animated pulse shows when leaderboards are updating in real-time
+- **Quick Navigation**: One-click access to full leaderboards from event pages
 
 ## Next Steps
 
